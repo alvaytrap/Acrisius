@@ -47,11 +47,8 @@ const StyledDataGridWrapper = styled("div")(({ theme }) => ({
     fontWeight: "bold",
     textAlign: "center",
   },
-  "& .MuiDataGrid-cell--textRight": {
-    textAlign: "center",
-    justifyContent: "center",
-  },
 }));
+
 
 const createInitialMatrix = (size: number): (number | null)[][] => {
   return Array.from({ length: size }, (_, rowIndex) =>
@@ -141,7 +138,7 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({
     setTextValue("");
   }, []);
 
-  const handleCloseError = useCallback((_, reason?: string) => {
+  const handleCloseError = useCallback((event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") return;
     setErrorOpen(false);
   }, []);
@@ -158,18 +155,20 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({
         width: 90,
         sortable: false,
         disableColumnMenu: true,
-        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
-        renderCell: (params) => <strong>{params.value}</strong>,
+        renderHeader: (params: any) => <strong>{params.colDef.headerName}</strong>,
+        renderCell: (params: any) => <strong>{params.value}</strong>,
+        cellClassName: 'MuiDataGrid-cell--textCenter',
       },
       ...Array.from({ length: size }, (_, i) => ({
         field: `vertex${i}`,
         headerName: getVertexLabel(i),
         width: 90,
-        type: "number",
+        type: "singleSelect" as const,
         sortable: false,
         disableColumnMenu: true,
         editable: true,
-        renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
+        renderHeader: (params: any) => <strong>{params.colDef.headerName}</strong>,
+        cellClassName: 'MuiDataGrid-cell--textCenter',
       })),
     ],
     [size, getVertexLabel]
@@ -190,7 +189,7 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({
   );
 
   const processRowUpdate = useCallback(
-    (newRow) => {
+    (newRow: any) => {
       const rowIndex = Number(newRow.id.charCodeAt(0) - 65);
       const newMatrix = matrix.map((row, i) => {
         if (i !== rowIndex) return row;
@@ -207,7 +206,7 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({
   );
 
   const handleCellKeyDown = useCallback(
-    (params, event: React.KeyboardEvent) => {
+    (params: any, event: React.KeyboardEvent) => {
       if (event.key === "Tab") {
         event.preventDefault();
         const { field, id } = params;

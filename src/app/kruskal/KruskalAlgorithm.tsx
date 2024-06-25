@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import AdjacencyMatrix from "@/app/components/AdjacencyMatrix";
 import { styled } from "@mui/system";
-import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowsProp, GridRenderCellParams, GridCellParams } from "@mui/x-data-grid";
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-columnHeaders": {
@@ -24,14 +24,15 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
+interface Edge {
+  edge: string;
+  weight: number;
+}
+
 const KruskalAlgorithm: React.FC = () => {
   const [matrix, setMatrix] = useState<(number | null)[][]>([]);
-  const [sortedEdges, setSortedEdges] = useState<
-    { edge: string; weight: number }[]
-  >([]);
-  const [mstEdges, setMstEdges] = useState<{ edge: string; weight: number }[]>(
-    []
-  );
+  const [sortedEdges, setSortedEdges] = useState<Edge[]>([]);
+  const [mstEdges, setMstEdges] = useState<Edge[]>([]);
   const [iterations, setIterations] = useState<string[]>([]);
   const [totalCost, setTotalCost] = useState<number>(0);
   const [showResults, setShowResults] = useState<boolean>(false);
@@ -46,16 +47,14 @@ const KruskalAlgorithm: React.FC = () => {
   }, []);
 
   const handleRunKruskal = useCallback(() => {
-    const edges: { edge: string; weight: number }[] = [];
+    const edges: Edge[] = [];
     const size = matrix.length;
 
     for (let i = 0; i < size; i++) {
       for (let j = i + 1; j < size; j++) {
         if (matrix[i][j] !== null && matrix[i][j] !== 0) {
           edges.push({
-            edge: `${String.fromCharCode(65 + i)},${String.fromCharCode(
-              65 + j
-            )}`,
+            edge: `${String.fromCharCode(65 + i)},${String.fromCharCode(65 + j)}`,
             weight: matrix[i][j]!,
           });
         }
@@ -87,7 +86,7 @@ const KruskalAlgorithm: React.FC = () => {
       }
     };
 
-    const result: { edge: string; weight: number }[] = [];
+    const result: Edge[] = [];
     let e = 0;
     let i = 0;
     let iterationIndex = 1;
@@ -107,9 +106,7 @@ const KruskalAlgorithm: React.FC = () => {
         union(parent, rank, x, y);
         e++;
         newIterations.push(
-          `it ${iterationIndex} T = {${result
-            .map((edge) => `(${edge.edge})`)
-            .join(",")}}`
+          `it ${iterationIndex} T = {${result.map((edge) => `(${edge.edge})`).join(",")}}`
         );
         total += nextEdge.weight;
       } else {
@@ -141,7 +138,7 @@ const KruskalAlgorithm: React.FC = () => {
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
-      renderCell: (params) => (
+      renderCell: (params: GridRenderCellParams) => (
         <Typography sx={{ fontWeight: "bold" }}>{params.value}</Typography>
       ),
     },
@@ -149,8 +146,8 @@ const KruskalAlgorithm: React.FC = () => {
       field: `edge${index}`,
       headerName: "",
       width: 90,
-      renderCell: (params) => {
-        const edge = params.value;
+      renderCell: (params: GridRenderCellParams) => {
+        const edge = params.value as string;
         const isSelected = mstEdges.some((e) => e.edge === edge);
         return (
           <Typography
@@ -165,8 +162,8 @@ const KruskalAlgorithm: React.FC = () => {
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
-      cellClassName: (params) =>
-        mstEdges.some((e) => e.edge === sortedEdges[index].edge)
+      cellClassName: (params: GridCellParams) =>
+        mstEdges.some((e) => e.edge === params.value)
           ? "selected"
           : "discarded",
     })),
@@ -179,7 +176,7 @@ const KruskalAlgorithm: React.FC = () => {
       ...sortedEdges.reduce((acc, edge, index) => {
         acc[`edge${index}`] = edge.edge;
         return acc;
-      }, {}),
+      }, {} as { [key: string]: string }),
     },
     {
       id: 1,
@@ -187,7 +184,7 @@ const KruskalAlgorithm: React.FC = () => {
       ...sortedEdges.reduce((acc, edge, index) => {
         acc[`edge${index}`] = edge.weight;
         return acc;
-      }, {}),
+      }, {} as { [key: string]: number }),
     },
   ];
 
@@ -199,10 +196,7 @@ const KruskalAlgorithm: React.FC = () => {
   return (
     <div>
       <Box sx={{ p: 2 }}>
-        <AdjacencyMatrix
-          onMatrixChange={handleMatrixChange}
-          initialSize={6}
-        />
+        <AdjacencyMatrix onMatrixChange={handleMatrixChange} initialSize={6} />
         <Button
           variant="contained"
           color="success"
@@ -229,25 +223,20 @@ const KruskalAlgorithm: React.FC = () => {
               <Typography key={index}>{iteration}</Typography>
             ))}
             <Typography variant="h6" sx={{ mt: 2 }}>
-              Se verifica que TODOS los vértices de G están en T y que hay n ={" "}
-              {n} y n – 1 = {nMinusOne} aristas en T y el árbol minimal T es el
-              representado arriba, cuyo coste total es de {costString}.
+              Se verifica que TODOS los vértices de G están en T y que hay n = {n} y n – 1 = {nMinusOne} aristas en T y el árbol minimal T es el representado arriba, cuyo coste total es de {costString}.
             </Typography>
             <Typography variant="h6" sx={{ mt: 2 }}>
-              Cual es el coste mínimo para conectar todos los vértices del grafo
-              G?
+              Cual es el coste mínimo para conectar todos los vértices del grafo G?
             </Typography>
             <Typography sx={{ fontWeight: "bold" }}>{totalCost}</Typography>
             <Typography variant="h6" sx={{ mt: 2 }}>
-              Aristas que conectan todos los vértices del grafo G con coste
-              mínimo:
+              Aristas que conectan todos los vértices del grafo G con coste mínimo:
             </Typography>
             <Typography sx={{ fontWeight: "bold" }}>
               {mstEdges.map((edge) => edge.edge.replace(",", "")).join(",")}
             </Typography>
             <Typography variant="h6" sx={{ mt: 2 }}>
-              ¿Existe otro conjunto de aristas distinto que represente otro
-              árbol generador minimal distinto al anterior?
+              ¿Existe otro conjunto de aristas distinto que represente otro árbol generador minimal distinto al anterior?
             </Typography>
             <Typography sx={{ fontWeight: "bold" }}>
               {multipleMST ? "Sí" : "No"}

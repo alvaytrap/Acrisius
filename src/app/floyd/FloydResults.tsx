@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import {
   Box,
   Typography,
@@ -41,11 +41,13 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-const FloydResults: React.FC<{
-  floydResult: any[];
+interface FloydResultsProps {
+  floydResult: Array<{ distances: number[][]; pathMatrix: number[][]; pivot: number }>;
   initialMatrix: number[][];
   isFinal?: boolean;
-}> = ({ floydResult, initialMatrix, isFinal = false }) => {
+}
+
+const FloydResults: React.FC<FloydResultsProps> = ({ floydResult, initialMatrix, isFinal = false }) => {
   const [startVertex1, setStartVertex1] = useState<string | null>(null);
   const [endVertex1, setEndVertex1] = useState<string | null>(null);
   const [path1, setPath1] = useState<string | null>(null);
@@ -65,8 +67,8 @@ const FloydResults: React.FC<{
   const handleFindPath = (
     startVertex: string | null,
     endVertex: string | null,
-    setPath: any,
-    setDistance: any
+    setPath: React.Dispatch<React.SetStateAction<string | null>>,
+    setDistance: React.Dispatch<React.SetStateAction<number | null>>
   ) => {
     if (!floydResult || startVertex === null || endVertex === null) {
       setPath("Invalid input");
@@ -88,7 +90,7 @@ const FloydResults: React.FC<{
       return;
     }
 
-    const findPath = (pathMatrix: any, u: number, v: number): string => {
+    const findPath = (pathMatrix: number[][], u: number, v: number): string => {
       if (u === v) return getVertexLabel(u);
       if (
         !pathMatrix[u] ||
@@ -150,7 +152,7 @@ const FloydResults: React.FC<{
       })),
     ];
 
-    const rows: GridRowsProp = finalStep.distances.map((row, rowIndex) => {
+    const rows: GridRowsProp = finalStep.distances.map((row, rowIndex: number) => {
       const rowData: {
         id: string;
         vertex: string;
@@ -159,9 +161,10 @@ const FloydResults: React.FC<{
         id: `${rowIndex}`,
         vertex: getVertexLabel(rowIndex),
       };
-      row.forEach((value, colIndex) => {
+      row.forEach((value: number | string, colIndex: number) => {
+        const numValue = typeof value === "number" ? value : parseFloat(value);
         rowData[`vertex${colIndex}`] =
-          value === Infinity || value === null || isNaN(value) ? -1 : value;
+          numValue === Infinity || isNaN(numValue) ? -1 : numValue;
       });
       return rowData;
     });
@@ -330,17 +333,17 @@ const FloydResults: React.FC<{
               width: 90,
               sortable: false,
               disableColumnMenu: true,
-              cellClassName: (params) => {
+              cellClassName: (params: GridCellParams) => {
                 const vertexIndex = Number(params.field.replace("vertex", ""));
                 const isPivotRowColumn = step.pivot === vertexIndex;
-
+              
                 if (
                   isPivotRowColumn ||
                   params.row.vertex === getVertexLabel(step.pivot)
                 ) {
                   return "fixed";
                 }
-
+              
                 const prevStep =
                   stepIndex === 0
                     ? initialMatrix
@@ -354,13 +357,13 @@ const FloydResults: React.FC<{
                 ) {
                   return "updated";
                 }
-
+              
                 return "";
               },
             })),
           ];
 
-          const rows: GridRowsProp = step.distances.map((row, rowIndex) => {
+          const rows: GridRowsProp = step.distances.map((row, rowIndex: number) => {
             const rowData: {
               id: string;
               vertex: string;
@@ -369,11 +372,10 @@ const FloydResults: React.FC<{
               id: `${rowIndex}`,
               vertex: getVertexLabel(rowIndex),
             };
-            row.forEach((value, colIndex) => {
+            row.forEach((value: number | string, colIndex) => {
+              const numValue = typeof value === "number" ? value : parseFloat(value);
               rowData[`vertex${colIndex}`] =
-                value === Infinity || value === null || isNaN(value)
-                  ? -1
-                  : value;
+                numValue === Infinity || isNaN(numValue) ? -1 : numValue;
             });
             return rowData;
           });
