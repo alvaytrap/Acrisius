@@ -1,0 +1,1 @@
+export { default as AdjacencyMatrix } from './AdjacencyMatrix/AdjacencyMatrix';

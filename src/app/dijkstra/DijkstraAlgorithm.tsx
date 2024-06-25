@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import AdjacencyMatrix from '@/app/components/AdjacencyMatrix';
 import DijkstraResults from './DijkstraResults';
-import { runDijkstra } from './dijkstra'; // Importa la función correctamente
+import { runDijkstra } from './dijkstra';
 import { Button, Stack, Box, Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
 
 const DijkstraAlgorithm: React.FC = () => {

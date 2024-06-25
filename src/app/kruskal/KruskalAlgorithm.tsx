@@ -142,33 +142,29 @@ const KruskalAlgorithm: React.FC = () => {
         <Typography sx={{ fontWeight: "bold" }}>{params.value}</Typography>
       ),
     },
-    ...sortedEdges.map((_, index) => ({
+    ...sortedEdges.map((edge, index) => ({
       field: `edge${index}`,
       headerName: "",
       width: 90,
       renderCell: (params: GridRenderCellParams) => {
-        const edge = params.value as string;
-        const isSelected = mstEdges.some((e) => e.edge === edge);
+        const isSelected = mstEdges.some((e) => e.edge === edge.edge);
+        const displayValue = params.row.id === 0 ? `(${edge.edge})` : edge.weight;
         return (
-          <Typography
-            sx={{
-              fontWeight: isSelected ? "bold" : "normal",
-            }}
-          >
-            {isSelected ? `(${edge})*` : `(${edge})`}
+          <Typography sx={{ fontWeight: isSelected ? "bold" : "normal" }}>
+            {displayValue}
           </Typography>
         );
       },
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
-      cellClassName: (params: GridCellParams) =>
-        mstEdges.some((e) => e.edge === params.value)
-          ? "selected"
-          : "discarded",
+      cellClassName: (params: GridCellParams) => {
+        const isSelected = mstEdges.some((e) => e.edge === edge.edge);
+        return isSelected ? "selected" : "discarded";
+      },
     })),
   ];
-
+  
   const rows: GridRowsProp = [
     {
       id: 0,
@@ -187,6 +183,9 @@ const KruskalAlgorithm: React.FC = () => {
       }, {} as { [key: string]: number }),
     },
   ];
+  
+  
+  
 
   const n = matrix.length;
   const nMinusOne = n - 1;
