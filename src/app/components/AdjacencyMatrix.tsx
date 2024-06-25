@@ -49,7 +49,6 @@ const StyledDataGridWrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-
 const createInitialMatrix = (size: number): (number | null)[][] => {
   return Array.from({ length: size }, (_, rowIndex) =>
     Array.from({ length: size }, (_, colIndex) =>
@@ -163,7 +162,7 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({
         field: `vertex${i}`,
         headerName: getVertexLabel(i),
         width: 90,
-        type: "singleSelect" as const,
+        type: "number" as const, // Asegúrate de que esto sea de tipo "number"
         sortable: false,
         disableColumnMenu: true,
         editable: true,
