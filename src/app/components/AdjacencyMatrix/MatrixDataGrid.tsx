@@ -42,18 +42,28 @@ interface MatrixDataGridProps {
   size: number;
   matrix: (number | null)[][];
   onMatrixChange: (matrix: (number | null)[][]) => void;
+  labelType: "letters" | "numbers";
 }
 
 const MatrixDataGrid: React.FC<MatrixDataGridProps> = ({
   size,
   matrix,
   onMatrixChange,
+  labelType,
 }) => {
   const apiRef = useGridApiRef();
 
   const getVertexLabel = useCallback((index: number): string => {
-    return String.fromCharCode(65 + index);
-  }, []);
+    if (labelType === "letters") {
+
+      return String.fromCharCode(65 + index);
+
+    } else {
+
+      return (index + 1).toString();
+
+    }
+  }, [labelType]);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -73,7 +83,7 @@ const MatrixDataGrid: React.FC<MatrixDataGridProps> = ({
         field: `vertex${i}`,
         headerName: getVertexLabel(i),
         width: 90,
-        type: "number" as const, // Asegúrate de que esto sea de tipo "number"
+        type: "number" as const,
         sortable: false,
         disableColumnMenu: true,
         editable: true,
@@ -102,7 +112,7 @@ const MatrixDataGrid: React.FC<MatrixDataGridProps> = ({
 
   const processRowUpdate = useCallback(
     (newRow: any) => {
-      const rowIndex = Number(newRow.id.charCodeAt(0) - 65);
+      const rowIndex = labelType === "letters" ? Number(newRow.id.charCodeAt(0) - 65) : Number(newRow.id) - 1;
       const newMatrix = matrix.map((row, i) => {
         if (i !== rowIndex) return row;
         return row.map((val, j) => {
@@ -113,7 +123,7 @@ const MatrixDataGrid: React.FC<MatrixDataGridProps> = ({
       onMatrixChange(newMatrix);
       return newRow;
     },
-    [matrix, onMatrixChange]
+    [matrix, onMatrixChange, labelType]
   );
 
   const handleCellKeyDown: GridEventListener<"cellKeyDown"> = useCallback(

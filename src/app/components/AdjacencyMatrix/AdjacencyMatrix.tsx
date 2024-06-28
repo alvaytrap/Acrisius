@@ -14,15 +14,17 @@ const createInitialMatrix = (size: number): (number | null)[][] => {
 interface AdjacencyMatrixProps {
   onMatrixChange?: (matrix: (number | null)[][]) => void;
   initialSize?: number;
+  labelType?: "letters" | "numbers";
 }
 
-const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({ onMatrixChange, initialSize = 7 }) => {
+const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({ onMatrixChange, initialSize = 7, labelType = "letters" }) => {
   const [size, setSize] = useState<number>(initialSize);
   const [matrix, setMatrix] = useState<(number | null)[][]>(createInitialMatrix(initialSize));
   const [tabValue, setTabValue] = useState<number>(0);
   const [textValue, setTextValue] = useState<string>("");
   const [errorOpen, setErrorOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+
 
   const handleSizeChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const newSize = parseInt(event.target.value, 10);
@@ -54,9 +56,12 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({ onMatrixChange, initi
   }, [size, onMatrixChange]);
 
   const handleMatrixChange = useCallback((newMatrix: (number | null)[][]) => {
-    setMatrix(newMatrix);
+    const sanitizedMatrix = newMatrix.map(row => 
+      row.map(value => (isNaN(value as number) ? null : value))
+    );
+    setMatrix(sanitizedMatrix);
     if (onMatrixChange) {
-      onMatrixChange(newMatrix);
+      onMatrixChange(sanitizedMatrix);
     }
   }, [onMatrixChange]);
 
@@ -76,7 +81,7 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({ onMatrixChange, initi
       </Tabs>
       {tabValue === 0 && (
         <Box sx={{ height: "auto", width: "100%" }}>
-          <MatrixDataGrid size={size} matrix={matrix} onMatrixChange={handleMatrixChange} />
+          <MatrixDataGrid size={size} matrix={matrix} onMatrixChange={handleMatrixChange} labelType={labelType}/>
           <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
             <Button variant="contained" color="warning" onClick={resetMatrix}>
               Reiniciar matriz

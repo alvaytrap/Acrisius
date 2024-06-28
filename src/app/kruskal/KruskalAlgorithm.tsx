@@ -151,7 +151,7 @@ const KruskalAlgorithm: React.FC = () => {
         const displayValue = params.row.id === 0 ? `(${edge.edge})` : edge.weight;
         return (
           <Typography sx={{ fontWeight: isSelected ? "bold" : "normal" }}>
-            {displayValue}
+            {displayValue}{params.row.id === 0 && isSelected ? "*" : ""}
           </Typography>
         );
       },
@@ -222,7 +222,8 @@ const KruskalAlgorithm: React.FC = () => {
               <Typography key={index}>{iteration}</Typography>
             ))}
             <Typography variant="h6" sx={{ mt: 2 }}>
-              Se verifica que TODOS los vértices de G están en T y que hay n = {n} y n – 1 = {nMinusOne} aristas en T y el árbol minimal T es el representado arriba, cuyo coste total es de {costString}.
+              Se verifica que TODOS los vértices de G están en T y que hay n = {n} y n – 1 = {nMinusOne} aristas en T y el árbol minimal T es el representado arriba, cuyo coste total es:<br />
+               {costString}.
             </Typography>
             <Typography variant="h6" sx={{ mt: 2 }}>
               Cual es el coste mínimo para conectar todos los vértices del grafo G?

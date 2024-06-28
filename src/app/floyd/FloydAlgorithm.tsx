@@ -13,7 +13,7 @@ const FloydAlgorithm: React.FC = () => {
   const handleRunFloyd = useCallback(() => {
     const adjustedMatrix = matrix.map((row) =>
       row.map((value) =>
-        value === null || value === -1 || isNaN(value) || value === Infinity
+        value === null || value === -1 || value === Infinity
           ? Infinity
           : value
       )
@@ -25,6 +25,7 @@ const FloydAlgorithm: React.FC = () => {
     );
     const result = runFloyd(adjustedMatrix);
     setFloydResult(result.steps);
+    console.log(result.steps);
   }, [matrix]);
 
   const handleMatrixChange = useCallback((newMatrix: (number | null)[][]) => {

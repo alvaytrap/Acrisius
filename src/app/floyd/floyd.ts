@@ -1,10 +1,8 @@
-export const runFloyd = (matrix: (number | null | any)[][]) => {
+export const runFloyd = (matrix: (number | null)[][]) => {
   const size = matrix.length;
   const distances = Array.from({ length: size }, (_, i) =>
     Array.from({ length: size }, (_, j) => {
-      if (matrix[i][j] === null || matrix[i][j] === -1 || isNaN(matrix[i][j])) {
-        return Infinity;
-      } else if (matrix[i][j] === 0 && i !== j) {
+      if (matrix[i][j] === null || matrix[i][j] === -1) {
         return Infinity;
       } else {
         return matrix[i][j]!;
