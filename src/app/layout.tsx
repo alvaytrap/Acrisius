@@ -20,7 +20,8 @@ const Nav: React.FC = () => {
     { text: 'Dijkstra (Camino mínimo)', href: '/dijkstra' },
     { text: 'Floyd (Distancia mínima)', href: '/floyd' },
     { text: 'Kruskal (Árbol generador minimal)', href: '/kruskal' },
-    { text: 'Knapsack (Problema de la mochila)', href: '/knapsack' }
+    { text: 'Knapsack (Problema de la mochila)', href: '/knapsack' },
+    { text: 'Análisis de grafo (Orden, medida y componentes)', href: '/graphAnalysis'}
   ];
 
   return (
@@ -74,6 +75,7 @@ const RootLayout: React.FC<NavProps> = ({ children }) => {
       '/floyd': 'Floyd (Distancia mínima)',
       '/kruskal': 'Kruskal (Árbol generador minimal)',
       '/knapsack': 'Problema de la mochila (Knapsack)',
+      '/graphAnalysis': 'Análisis de grafo (Orden, medida y componentes)'
     };
 
     const sectionName = sectionNames[pathname] || 'Acrisius';

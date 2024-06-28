@@ -209,7 +209,7 @@ const Knapsack: React.FC = () => {
         </Card>
       </div>
 
-      <h2 style={{ marginTop: "20px" }}>Objetos</h2>
+      <h2 style={{ marginTop: "20px" }}>Lista de objetos</h2>
       <List>
         {items.map((item, index) => (
           <ListItem key={index}>
@@ -231,11 +231,11 @@ const Knapsack: React.FC = () => {
         onClick={removeAllItems}
         startIcon={<ClearAllIcon />}
       >
-        Eliminar Todos los Ítems
+        Eliminar todos los Objetos
       </Button>
       <h2 style={{ marginTop: "20px" }}>Resultado:</h2>
       <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
-        <Button variant="contained" color="secondary" onClick={solveKnapsack}>
+        <Button variant="contained" color="success" onClick={solveKnapsack}>
           Resolver Problema de la Mochila
         </Button>
       </div>

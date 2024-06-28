@@ -1,4 +1,4 @@
-import React, { useState, useCallback, ChangeEvent } from "react";
+import React, { useState, useCallback, ChangeEvent, useEffect } from "react";
 import { TextField, Box, Tab, Tabs, Button, Stack, Snackbar, Alert } from "@mui/material";
 import MatrixDataGrid from "./MatrixDataGrid";
 import TextImporter from "./TextImporter";
@@ -25,6 +25,11 @@ const AdjacencyMatrix: React.FC<AdjacencyMatrixProps> = ({ onMatrixChange, initi
   const [errorOpen, setErrorOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  useEffect(() => {
+    if (onMatrixChange) {
+      onMatrixChange(matrix);
+    }
+  }, [matrix, onMatrixChange]);
 
   const handleSizeChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const newSize = parseInt(event.target.value, 10);

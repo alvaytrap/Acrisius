@@ -9,11 +9,15 @@ import {
 import { styled } from "@mui/system";
 
 const StyledDataGridWrapper = styled("div")(({ theme }) => ({
+  "& .MuiDataGrid-root": {
+    width: "auto",
+  },
   "& .MuiDataGrid-cell": {
     border: "1px solid #ddd",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    padding: "4px",
   },
   "& .MuiDataGrid-columnHeaders": {
     backgroundColor: "#f5f5f5",
@@ -24,6 +28,7 @@ const StyledDataGridWrapper = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    padding: "4px",
   },
   "& .MuiDataGrid-columnHeaderTitleContainer": {
     display: "flex",
@@ -55,13 +60,9 @@ const MatrixDataGrid: React.FC<MatrixDataGridProps> = ({
 
   const getVertexLabel = useCallback((index: number): string => {
     if (labelType === "letters") {
-
       return String.fromCharCode(65 + index);
-
     } else {
-
       return (index + 1).toString();
-
     }
   }, [labelType]);
 
@@ -69,8 +70,8 @@ const MatrixDataGrid: React.FC<MatrixDataGridProps> = ({
     () => [
       {
         field: "id",
-        headerName: "Vertex",
-        width: 90,
+        headerName: "",
+        width: 60,
         sortable: false,
         disableColumnMenu: true,
         renderHeader: (params: any) => (
@@ -82,7 +83,7 @@ const MatrixDataGrid: React.FC<MatrixDataGridProps> = ({
       ...Array.from({ length: size }, (_, i) => ({
         field: `vertex${i}`,
         headerName: getVertexLabel(i),
-        width: 90,
+        width: 60,
         type: "number" as const,
         sortable: false,
         disableColumnMenu: true,
